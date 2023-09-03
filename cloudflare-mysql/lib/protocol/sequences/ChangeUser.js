@@ -25,39 +25,41 @@ ChangeUser.prototype.determinePacket = function determinePacket(firstByte) {
 
 ChangeUser.prototype.start = function(handshakeInitializationPacket) {
   var scrambleBuff = handshakeInitializationPacket.scrambleBuff();
-  scrambleBuff     = Auth.token(this._password, scrambleBuff);
 
-  var packet = new Packets.ComChangeUserPacket({
-    user          : this._user,
-    scrambleBuff  : scrambleBuff,
-    database      : this._database,
-    charsetNumber : this._charsetNumber
+  Auth.token(this._password, scrambleBuff).then((scrambleBuff) => {
+    var packet = new Packets.ComChangeUserPacket({
+      user          : this._user,
+      scrambleBuff  : scrambleBuff,
+      database      : this._database,
+      charsetNumber : this._charsetNumber
+    });
+
+    this._currentConfig.user          = this._user;
+    this._currentConfig.password      = this._password;
+    this._currentConfig.database      = this._database;
+    this._currentConfig.charsetNumber = this._charsetNumber;
+
+    this.emit('packet', packet);
   });
-
-  this._currentConfig.user          = this._user;
-  this._currentConfig.password      = this._password;
-  this._currentConfig.database      = this._database;
-  this._currentConfig.charsetNumber = this._charsetNumber;
-
-  this.emit('packet', packet);
 };
 
 ChangeUser.prototype['AuthSwitchRequestPacket'] = function (packet) {
   var name = packet.authMethodName;
-  var data = Auth.auth(name, packet.authMethodData, {
+  
+  Auth.auth(name, packet.authMethodData, {
     password: this._password
+  }).then((data) => {
+    if (data !== undefined) {
+      this.emit('packet', new Packets.AuthSwitchResponsePacket({
+        data: data
+      }));
+    } else {
+      var err   = new Error('MySQL is requesting the ' + name + ' authentication method, which is not supported.');
+      err.code  = 'UNSUPPORTED_AUTH_METHOD';
+      err.fatal = true;
+      this.end(err);
+    }
   });
-
-  if (data !== undefined) {
-    this.emit('packet', new Packets.AuthSwitchResponsePacket({
-      data: data
-    }));
-  } else {
-    var err   = new Error('MySQL is requesting the ' + name + ' authentication method, which is not supported.');
-    err.code  = 'UNSUPPORTED_AUTH_METHOD';
-    err.fatal = true;
-    this.end(err);
-  }
 };
 
 ChangeUser.prototype['ErrorPacket'] = function(packet) {

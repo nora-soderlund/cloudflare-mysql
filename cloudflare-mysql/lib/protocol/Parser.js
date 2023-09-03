@@ -2,6 +2,7 @@ var PacketHeader = require('./PacketHeader');
 var BigNumber    = require('bignumber.js');
 var Buffer       = require('safe-buffer').Buffer;
 var BufferList   = require('./BufferList');
+const { default: bufferCopy } = require('../BufferCopy');
 
 var MAX_PACKET_LENGTH    = Math.pow(2, 24) - 1;
 var MUL_32BIT            = Math.pow(2, 32);
@@ -72,11 +73,11 @@ Parser.prototype.append = function append(chunk) {
     offset = 0;
 
     // Copy data slice
-    offset += this._buffer.copyWithin(buffer, 0, sliceStart, sliceEnd);
+    offset += bufferCopy(this._buffer, buffer, 0, sliceStart, sliceEnd);
 
     // Copy chunks
     for (var i = 0; i < chunks.length; i++) {
-      offset += chunks[i].copy(buffer, offset);
+      offset += bufferCopy(chunks[i], buffer, offset);
     }
   } else if (chunks.length > 1) {
     // Create a new Buffer
@@ -85,7 +86,7 @@ Parser.prototype.append = function append(chunk) {
 
     // Copy chunks
     for (var i = 0; i < chunks.length; i++) {
-      offset += chunks[i].copy(buffer, offset);
+      offset += bufferCopy(chunks[i], buffer, offset);
     }
   } else {
     // Buffer is the only chunk
@@ -269,7 +270,7 @@ Parser.prototype.parsePacketTerminatedString = function() {
 
 Parser.prototype.parseBuffer = function(length) {
   var response = Buffer.alloc(length);
-  this._buffer.copyWithin(response, 0, this._offset, this._offset + length);
+  bufferCopy(this._buffer, response, 0, this._offset, this._offset + length);
 
   this._offset += length;
   return response;
@@ -408,11 +409,11 @@ Parser.prototype._combineLongPacketBuffers = function _combineLongPacketBuffers(
 
   // Copy long buffers
   while ((buf = this._longPacketBuffers.shift())) {
-    offset += buf.copy(buffer, offset);
+    offset += bufferCopy(buf, buffer, offset);
   }
 
   // Copy remaining bytes
-  this._buffer.copyWithin(buffer, offset, this._offset);
+  bufferCopy(this._buffer, buffer, offset, this._offset);
 
   this._buffer       = buffer;
   this._offset       = 0;

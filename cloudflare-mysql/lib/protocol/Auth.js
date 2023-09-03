@@ -1,23 +1,24 @@
-var Buffer = require('safe-buffer').Buffer;
 var Crypto = require('crypto');
 var Auth   = exports;
 
-function auth(name, data, options) {
+async function auth(name, data, options) {
   options = options || {};
 
   switch (name) {
     case 'mysql_native_password':
-      return Auth.token(options.password, data.slice(0, 20));
+      return await Auth.token(options.password, data.slice(0, 20));
     default:
       return undefined;
   }
 }
 Auth.auth = auth;
 
-function sha1(msg) {
-  var hash = Crypto.createHash('sha1');
-  hash.update(msg, 'binary');
-  return hash.digest('binary');
+async function sha1(msg) {
+  const hashBuffer = await crypto.subtle.digest('SHA-1', Buffer.from(msg, "binary"));
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashBinary = hashArray.map(byte => String.fromCharCode(byte)).join('');
+
+  return hashBinary;
 }
 Auth.sha1 = sha1;
 
@@ -32,15 +33,18 @@ function xor(a, b) {
 }
 Auth.xor = xor;
 
-Auth.token = function(password, scramble) {
+Auth.token = async function(password, scramble) {
   if (!password) {
     return Buffer.alloc(0);
   }
 
+  const encoder = new TextEncoder("utf-8");
+
   // password must be in binary format, not utf8
-  var stage1 = sha1((Buffer.from(password, 'utf8')).toString('binary'));
-  var stage2 = sha1(stage1);
-  var stage3 = sha1(scramble.toString('binary') + stage2);
+  var stage1 = await sha1(Buffer.from(encoder.encode(password)));
+  var stage2 = await sha1(stage1);
+  var stage3 = await sha1(scramble.toString("binary") + stage2);
+ 
   return xor(stage3, stage1);
 };
 

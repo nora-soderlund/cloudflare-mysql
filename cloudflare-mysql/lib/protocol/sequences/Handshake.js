@@ -35,20 +35,20 @@ Handshake.prototype.determinePacket = function determinePacket(firstByte, parser
 
 Handshake.prototype['AuthSwitchRequestPacket'] = function (packet) {
   var name = packet.authMethodName;
-  var data = Auth.auth(name, packet.authMethodData, {
+  Auth.auth(name, packet.authMethodData, {
     password: this._config.password
+  }).then((data) => {
+    if (data !== undefined) {
+      this.emit('packet', new Packets.AuthSwitchResponsePacket({
+        data: data
+      }));
+    } else {
+      var err   = new Error('MySQL is requesting the ' + name + ' authentication method, which is not supported.');
+      err.code  = 'UNSUPPORTED_AUTH_METHOD';
+      err.fatal = true;
+      this.end(err);
+    }
   });
-
-  if (data !== undefined) {
-    this.emit('packet', new Packets.AuthSwitchResponsePacket({
-      data: data
-    }));
-  } else {
-    var err   = new Error('MySQL is requesting the ' + name + ' authentication method, which is not supported.');
-    err.code  = 'UNSUPPORTED_AUTH_METHOD';
-    err.fatal = true;
-    this.end(err);
-  }
 };
 
 Handshake.prototype['HandshakeInitializationPacket'] = function(packet) {
@@ -87,17 +87,31 @@ Handshake.prototype._tlsUpgradeCompleteHandler = function() {
 
 Handshake.prototype._sendCredentials = function() {
   var packet = this._handshakeInitializationPacket;
-  this.emit('packet', new Packets.ClientAuthenticationPacket({
-    clientFlags   : this._config.clientFlags,
-    maxPacketSize : this._config.maxPacketSize,
-    charsetNumber : this._config.charsetNumber,
-    user          : this._config.user,
-    database      : this._config.database,
-    protocol41    : packet.protocol41,
-    scrambleBuff  : (packet.protocol41)
-      ? Auth.token(this._config.password, packet.scrambleBuff())
-      : Auth.scramble323(packet.scrambleBuff(), this._config.password)
-  }));
+
+  if(packet.protocol41) {
+    Auth.token(this._config.password, packet.scrambleBuff()).then((scrambleBuffer) => {
+      this.emit('packet', new Packets.ClientAuthenticationPacket({
+        clientFlags   : this._config.clientFlags,
+        maxPacketSize : this._config.maxPacketSize,
+        charsetNumber : this._config.charsetNumber,
+        user          : this._config.user,
+        database      : this._config.database,
+        protocol41    : packet.protocol41,
+        scrambleBuff  : scrambleBuffer
+      }));
+    });
+  }
+  else {
+    this.emit('packet', new Packets.ClientAuthenticationPacket({
+      clientFlags   : this._config.clientFlags,
+      maxPacketSize : this._config.maxPacketSize,
+      charsetNumber : this._config.charsetNumber,
+      user          : this._config.user,
+      database      : this._config.database,
+      protocol41    : packet.protocol41,
+      scrambleBuff  : Auth.scramble323(packet.scrambleBuff(), this._config.password)
+    }));
+  }
 };
 
 Handshake.prototype['UseOldPasswordPacket'] = function() {
