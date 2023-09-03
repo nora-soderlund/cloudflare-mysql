@@ -47,6 +47,8 @@ export default {
           throw new Error(error.message);
 
         connection.query("SELECT title FROM articles WHERE title LIKE CONCAT('%', ?, '%')", [ searchInput ], (error, rows, fields) => {
+          connection.end();
+          
           resolve({ fields, rows });
         });
       });
