@@ -29,9 +29,8 @@ Types are automatically included. The types are the same as @types/mysql, at the
 ```ts
 import { createConnection } from "cloudflare-mysql";
 
-
 export default {
-	async fetch(request: Request, env: Env, context: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env, context: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const searchInput = url.searchParams.get("search");
 
