@@ -1,0 +1,1 @@
+{"version":3,"file":"CloudflareSocket.d.ts","sourceRoot":"","sources":["../../src/interfaces/CloudflareSocket.ts"],"names":[],"mappings":";AAAA,MAAM,CAAC,OAAO,WAAW,gBAAgB;IACvC,IAAI,QAAQ,IAAI,cAAc,CAAC;IAC/B,IAAI,QAAQ,IAAI,cAAc,CAAC;IAC/B,IAAI,MAAM,IAAI,OAAO,CAAC,IAAI,CAAC,CAAC;IAC5B,KAAK,IAAI,OAAO,CAAC,IAAI,CAAC,CAAC;IACvB,QAAQ,CAAC,OAAO,CAAC,EAAE,UAAU,GAAG,MAAM,CAAC;CACxC"}

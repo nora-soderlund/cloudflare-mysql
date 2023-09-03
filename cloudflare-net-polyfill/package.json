@@ -1,0 +1,16 @@
+{
+  "name": "net-polyfill",
+  "version": "0.9.0",
+  "main": "dist/index.js",
+  "private": true,
+  "scripts": {
+    "build": "npx tsc"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230821.0",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "cloudflare-stream-polyfill": "file:../cloudflare-stream-polyfill"
+  }
+}

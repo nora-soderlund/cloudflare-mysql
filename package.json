@@ -1,0 +1,29 @@
+{
+  "name": "cloudflare-mysql",
+  "version": "0.9.0",
+  "description": "A Cloudflare Workers compatible MySQL package based on the MySQL Node package.",
+  "main": "cloudflare-mysql/index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nora-soderlund/cloudflare-mysql.git"
+  },
+  "keywords": [
+    "mysql",
+    "cloudflare",
+    "workers",
+    "edge"
+  ],
+  "author": "Nora Söderlund",
+  "license": "MIT",
+  "types": "./cloudflare-mysql/index.d.ts",
+  "bugs": {
+    "url": "https://github.com/nora-soderlund/cloudflare-mysql/issues"
+  },
+  "homepage": "https://github.com/nora-soderlund/cloudflare-mysql#readme"
+}

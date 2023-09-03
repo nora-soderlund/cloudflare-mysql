@@ -1,0 +1,8 @@
+name = "mysql"
+main = "src/worker.ts"
+compatibility_date = "2023-08-21"
+node_compat = true
+
+[vars]
+MYSQL_DATABASE = "developer_blog"
+MYSQL_USER_NAME = "newuser"

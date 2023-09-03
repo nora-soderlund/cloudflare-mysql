@@ -1,0 +1,52 @@
+{
+  "name": "mysql",
+  "description": "A node.js driver for mysql. It is written in JavaScript, does not require compiling, and is 100% MIT licensed.",
+  "version": "2.18.1",
+  "license": "MIT",
+  "author": "Felix Geisendörfer <felix@debuggable.com> (http://debuggable.com/)",
+  "main": "lib/index.js",
+  "contributors": [
+    "Andrey Sidorov <sidorares@yandex.ru>",
+    "Bradley Grainger <bgrainger@gmail.com>",
+    "Douglas Christopher Wilson <doug@somethingdoug.com>",
+    "Diogo Resende <dresende@thinkdigital.pt>",
+    "Nathan Woltman <nwoltman@outlook.com>",
+    "Nora Söderlund <norasoderlund@icloud.com>"
+  ],
+  "repository": "mysqljs/mysql",
+  "dependencies": {
+    "bignumber.js": "9.0.2",
+    "cloudflare-net-polyfill": "file:../cloudflare-net-polyfill/",
+    "cloudflare-stream-polyfill": "file:../cloudflare-stream-polyfill/",
+    "readable-stream": "2.3.7",
+    "safe-buffer": "5.2.1",
+    "sqlstring": "2.3.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230821.0",
+    "@types/mysql": "^2.15.21",
+    "after": "0.8.2",
+    "eslint": "7.32.0",
+    "seedrandom": "3.0.5",
+    "typescript": "^5.2.2",
+    "urun": "0.0.8",
+    "utest": "0.0.8"
+  },
+  "files": [
+    "lib/",
+    "Changes.md",
+    "License",
+    "Readme.md",
+    "index.js"
+  ],
+  "engines": {
+    "node": ">= 0.6"
+  },
+  "scripts": {
+    "lint": "eslint . && node tool/lint-readme.js",
+    "test": "node test/run.js",
+    "test-ci": "node tool/install-nyc.js --nyc-optional --reporter=lcovonly --reporter=text -- npm test",
+    "test-cov": "node tool/install-nyc.js --reporter=html --reporter=text -- npm test",
+    "version": "node tool/version-changes.js && git add Changes.md"
+  }
+}
