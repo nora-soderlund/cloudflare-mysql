@@ -1,6 +1,6 @@
 {
   "name": "cloudflare-mysql",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "A Cloudflare Workers compatible MySQL package based on the MySQL Node package.",
   "main": "cloudflare-mysql/index.js",
   "directories": {
@@ -10,6 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@types/mysql": "^2.15.21",
     "bignumber.js": "9.0.2",
     "cloudflare-net-polyfill": "^0.9.0",
     "cloudflare-stream-polyfill": "^0.9.0",
@@ -19,7 +20,6 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230821.0",
-    "@types/mysql": "^2.15.21",
     "after": "0.8.2",
     "eslint": "7.32.0",
     "seedrandom": "3.0.5",
