@@ -12,6 +12,6 @@
     "wrangler": "^3.0.0"
   },
   "dependencies": {
-    "cloudflare-mysql": "^0.9.3"
+    "cloudflare-mysql": "^0.9.4"
   }
 }
